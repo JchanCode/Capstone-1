@@ -1,0 +1,34 @@
+                        Capstone Project Proposal  "Traders"
+
+
+Goals:
+A social platform for traders to  - meet fellow traders
+                                  - keep track of assets
+                                  - get stock news
+                                  - Portfolios
+
+Demographic:
+Anyone who is interested in trading from newbie to experts.
+
+
+Data:
+Stock data - Price (Opening, Closing)
+           - Stock Symbols
+           - Market News 
+
+
+Database Schema:
+Users   -user_id(PK), first_name, last_name, email, username, password
+Stocks  -stock_id(PK), symbol, name, open_price, close_price
+Portfolios  -user_id(PK,FK), stock_id(PK, FK)
+WatchList   -user_id(PK,FK), stock_id(PK,FK)
+
+
+User Flow: 
+https://docs.google.com/drawings/d/1_qhN8mx2a-2zc7jKCWeeQqH3tQ3_nZ3xHbAEztUnmIY/edit?usp=sharing
+
+
+Sensitive Information:
+User password, User page (Public/Private)
+
+
