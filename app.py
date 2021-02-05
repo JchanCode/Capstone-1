@@ -31,8 +31,8 @@ finnhub_client = finnhub.Client(api_key="c03or7f48v6sogn2ue9g")
 connect_db(app)
 
 
-# db.drop_all()
-# db.create_all()
+db.drop_all()
+db.create_all()
 
 ###############################################################################
 #
@@ -244,8 +244,9 @@ def search():
     symbols = search_symbol(search)
     post_form = PostForm()
     signup_form = RegisterUserForm()
+    login_form=LoginForm()
 
-    return render_template('users/index.html', post_form=post_form, symbols=symbols, signup_form=signup_form)
+    return render_template('users/index.html',login_form=login_form, post_form=post_form, symbols=symbols, signup_form=signup_form)
 
 
 ###############################################################################
@@ -525,7 +526,6 @@ def homepage():
 
     if g.user:
         news = get_news(g.user)
-        import pdb;pdb.set_trace()
 
 
         return render_template("homepage.html", signup_form=signup_form,    login_form=login_form, post_form=post_form, news=news, do_format = format_datetime)
