@@ -9,6 +9,7 @@ db = SQLAlchemy()
 
 
 
+
 class Follows(db.Model):
     """
     Connection of a follower <-> followed_user
@@ -21,12 +22,10 @@ class Follows(db.Model):
                                         ondelete="cascade"),
                                         primary_key=True)
 
-    user_following_id = db.Column( db.Column(
-                                   db.Integer,
-                                   db.ForeignKey("user.id",
+    user_following_id = db.Column( db.Integer,
+                                   db.ForeignKey("users.id",
                                    ondelete="cascade"),
                                    primary_key=True)
-        )
 
 class Likes(db.Model):
     """
@@ -35,9 +34,26 @@ class Likes(db.Model):
 
     __tablename__ = "likes"
 
-    id = db.Column(db.Integer, primary_key=True, auto_increment=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"))
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.id", ondelete="cascade"), unique=True)
+    chatter_id = db.Column(db.Integer, db.ForeignKey("chatters.id", ondelete="cascade"), unique=True)
+
+
+class Comment(db.Model):
+    """
+    An individual comments on chatter
+    """
+
+    __tablename__ ="comments"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
+    chatter_id = db.Column(db.Integer, db.ForeignKey("chatters.id", ondelete="cascade"))
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    body = db.Column(db.Text, nullable=False)
+
+    user = db.relationship("User")
+
 
 class User(db.Model):
     """
@@ -46,14 +62,14 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, auto_increment=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), unique=True,nullable=False)
     password = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, default="/static/images/default-pic.png", nullable=True)
     bio = db.Column(db.Text, nullable=True)
     location = db.Column(db.Text, nullable=True)
 
-    messages = db.relationship('Post')
+    chatters = db.relationship("Chatter")
 
     followers = db.relationship("User",
                                 secondary="follows",
@@ -64,6 +80,13 @@ class User(db.Model):
                                 secondary="follows",
                                 primaryjoin=(Follows.user_following_id == id),
                                 secondaryjoin=(Follows.user_being_followed_id == id))
+
+    likes = db.relationship("Chatter", secondary="likes")
+
+    comments = db.relationship("Chatter", secondary="comments")
+
+    watchlist = db.relationship("Stock",
+                                secondary="watchlist")
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}>"
@@ -78,8 +101,23 @@ class User(db.Model):
         """Is this user following "other_user"? """
 
         found_user_list = [user for user in self.following if user == other_user]
+
         return len(found_user_list) == 1
+
+    def liked_chatters_id_list(self):
+        """Return User's liked msg id"""
+
+        liked_chatters_id = [chatter.id for chatter in self.likes]
+        return liked_chatters_id
     
+    def watchlist_list(self):
+        """
+        Return User's watchlist stock's id
+        """
+
+        watchlist_list = [stock.id for stock in self.watchlist]
+        return watchlist_list
+
     @classmethod
     def signup(cls, username, password, image_url, bio, location):
         """
@@ -93,7 +131,7 @@ class User(db.Model):
                     password=hashed_pwd,
                     image_url=image_url,
                     bio=bio,
-                    location=location,)
+                    location=location)
 
         db.session.add(user)
         return user
@@ -114,36 +152,23 @@ class User(db.Model):
 
         return False
 
-class Post(db.Model):
+
+class Chatter(db.Model):
     """
-    An individual post
+    An individual chatter
     """
 
-    __tablename__ = "posts"
+    __tablename__ = "chatters"
 
-    id = db.Column(db.Integer, primary_key=True, auto_increment=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    is_portfolio = db.Column(db.Boolean,nullable=False, default=False)
-    title = db.Column(db.String(250), nullable=False)
-    body = db.Column(db.text, nullable=False)
-    media_link = db.Column(db.text, nullable=True)
+    title = db.Column(db.String(140), nullable=False,)
+    body = db.Column(db.Text, nullable=False)
+    media_link = db.Column(db.Text, nullable=True)
 
     user = db.relationship("User")
-
-class Comment(db.Model):
-    """
-    An individual comments on post
-    """
-
-    __tablename__ = "comments"
-
-    id = db.Column(db.Integer, primary_key=True, auto_increment=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.id", ondelete="cascade"))
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    body = db.Column(db.text, nullable=False)
-
+    comments = db.relationship("Comment")
 
 
 class Stock(db.Model):
@@ -154,9 +179,17 @@ class Stock(db.Model):
     __tablename__ = "stocks"
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
     symbol = db.Column(db.String(10), nullable=False, unique=True)
-    description = db.Column(db.String(100), nullable=False, unique=True)
+    assettype = db.Column(db.String)
+    exchange = db.Column(db.String)
+    industry = db.Column(db.String)
+    weekhigh = db.Column(db.Float)
+    weeklow = db.Column(db.Float)
+
     
+
+
 class Watchlist(db.Model):
     """
     Watchlist connection between User <-> Stock
@@ -168,6 +201,8 @@ class Watchlist(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"))
     stock_id = db.Column(db.Integer, db.ForeignKey("stocks.id"))
 
+
+
 class Like_WL(db.Model):
     """
     Watchlist's Like
@@ -177,7 +212,7 @@ class Like_WL(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"))
-    comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), ondelete="cascade")
+    comment_id = db.Column(db.Integer, db.ForeignKey("comments.id", ondelete="cascade"))
 
 
 def connect_db(app):

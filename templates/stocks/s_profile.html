@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- extending "base.html"   in s_profile.html block content-->
+    <div class="container">
+      <div class="row">
+<!-- CARD -->
+        <aside class="col-sm-12 col-md-4 col-lg-3 px-0">
+          <div class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs flex-column flex-sm-row card-header-tabs justify-content-evenly" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a href="#watchlist" class="nav-link nav-font px-1" id="watchlist-tab"  data-bs-toggle="tab"  role="tab" aria-controls="watchlist" aria-selected="false">Watchlist</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a href="#following" class="nav-link nav-font px-1" id="following-tab"  data-bs-toggle="tab"  role="tab" aria-controls="following" aria-selected="false">Following</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a href="#likes" class="nav-link nav-font px-1" id="likes-tab"  data-bs-toggle="tab" role="tab" aria-controls="likes" aria-selected="false">Liked</a>
+                </li>
+              </ul>
+              <div class="card-body">
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+
+                  </div>
+                  <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+                    following
+                  </div>
+                  <div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+                    likes
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+<!-- Company Profile -->
+        <div class="col-sm-12 col-md-8 col-lg-6">
+          <div class="row">
+            <div class="col-4 col-sm-6">
+              <a href="{{logo_url}}">
+                <img src='https://logo.clearbit.com/{{logo_url}}' alt="{{overview['Name']}}'s logo">
+              </a>
+            </div>
+            <div class="col-8 col-sm-6 ">
+              <div class="">
+                {% if stock.id in g.user.watchlist_list() %}
+                    <form action="/stocks/{{overview['Symbol']}}/delete" method="post" class="mt-5 pt-4 ml-5 pl-3">
+                    <button class="btn btn-outline-danger btn-sm">
+                      <i class="fas fa-minus"></i> {{overview["Symbol"]}}
+                    </button>
+                  </form>
+                {% else %}
+                  <form action="/stocks/{{overview['Symbol']}}/add" method="post" class="mt-5 pt-4 ml-5 pl-3">
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-plus"></i> {{overview["Symbol"]}}
+                    </button>
+                  </form>
+                {% endif %}
+                </form>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12">
+              <h3 class="company-name">
+                {{overview["Name"]}}
+              </h3>
+              <p class="company-desc">
+                {{overview["Description"]}}
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <ul class="list-group list-group-flush company-misc">
+                <li class="list-group-item d-flex justify-content-between align-items-center">Exchange:<span>{{overview["Exchange"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Currency:<span>{{overview["Currency"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Country:<span>{{overview["Country"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Sector:<span>{{overview["Sector"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Industry:<span>{{overview["Industry"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Market Cap:<span>{{overview["MarketCapitalization"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">EBITDA:<span>{{overview["EBITDA"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Dividend Yield:<span>{{overview["DividendYield"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">52week High:<span>{{overview["52WeekHigh"]}}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">52week Low:<span>{{overview["52WeekLow"]}}</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+{% endblock %}

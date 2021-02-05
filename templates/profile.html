@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- extending "base.html"   in DETAIL.HTML -->
+
+<!-- CARD -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-4 col-lg-2 px-0">
+      </div>
+                <!-- User Profile -->
+      <div class="col-sm-12 col-md-8 col-lg-8 prof-container my-4 " >
+        <div class="card prof-card" >
+          <div class="row ">
+            
+              <div class="col-md-4  ">
+                <img class="prof-pic m-2 mt-2"src="{{user.image_url}}" alt="{{user.username}}">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body ">
+                  <h4 class="card-title">@{{user.username}}  <span class="mx-1"><i class="fa fa-map-marker location-marker" ></i>  {{user.location}}</span></h4>
+                  <p class="class-text">{{user.bio}}</p>
+
+                {% if g.user.id == user.id %}
+                        <!-- Trigger the modal with a button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" data-target="#myModal">Edit User</button>
+                                    <!-- Modal edit -->
+                  <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Edit Profile</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="/users/edit" method="POST" id="edit-form">
+                            {{ edit_form.hidden_tag() }}
+
+                            {% for field in edit_form if field.widget.input_type != 'hidden' and field.name != 'password' %}
+                              {% for error in field.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                              {{ field.label }}:
+                              {{ field(placeholder=field.label.text, class="form-control")}}
+                            {% endfor %}
+
+                            <p>To confirm changes, enter your password:</p>
+                            {% if edit_form.password.errors %}
+                              {% for error in edit_form.password.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            {% endif %}
+                            {{ edit_form.password(placeholder="Enter your password to confirm", class="form-control")}}
+                          </form>
+                        </div>
+                        <div class="modal-footer">   
+                          <button class="btn btn-success" form="edit-form">Edit</button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% else %}
+                    {% if g.user.id in following_list %}
+                      <form  method="post" action="/stop-following/{{user_id}}">
+                        <button class="btn btn-danger btn-sm m-1" type="submit">Unfollow</button>
+                      </form>
+                    {% else %}
+                      <form  method="POST" action="/follow/{{user_id}}">
+                        <button class="btn btn-primary btn-sm m-1" type="submit">Follow</button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+                            <!-- Modal End -->
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-2"></div>
+    </div>
+                            <!-- User Stats -->
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-4 col-lg-1"></div>
+      <div class="card text-center col-sm-12 col-md-8 col-lg-10">
+        <div class="card-header tab-body-header">
+
+          <ul class="nav nav-tabs card-header-tabs justify-content-evenly" id="profTab" role="tablist">
+
+            <li class="nav-item" role="presentation">
+              <a href="#prof-watchlist" id="watchlist-profTab" class="nav-link" data-bs-toggle="tab"  role="tab" aria-controls="prof-watchlist" aria-selected="false">
+                WatchList 
+                <span class="badge bg-secondary">{{ user.watchlist|length }}</span>
+              </a>
+            </li>
+
+            <li class="nav-item" role="presentation">
+              <a href="#prof-chatters" id="chatters-profTab" class="nav-link" data-bs-toggle="tab"  role="tab" aria-controls="prof-chatters" aria-selected="false">
+                Chatters
+                <span class="badge bg-secondary">{{ user.chatters|length }}</span>
+              </a>
+            </li>
+          {% if g.user.id == user.id%}
+            <li class="nav-item" role="presentation">
+              <a href="#prof-followers" id="followers-profTab" class="nav-link" data-bs-toggle="tab"  role="tab" aria-controls="prof-followers" aria-selected="false">
+                Followers 
+                <span class="badge bg-secondary">{{ user.followers|length }}</span>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a href="#prof-following" id="following-profTab" class="nav-link" data-bs-toggle="tab"  role="tab" aria-controls="prof-following" aria-selected="false">
+                Following 
+                <span class="badge bg-secondary" >{{ user.following|length }}</span>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a href="#prof-likes" id="likes-profTab" class="nav-link" data-bs-toggle="tab"  role="tab" aria-controls="prof-likes" aria-selected="false">
+                Liked
+                <span class="badge bg-secondary">{{ user.likes|length }}</span>
+              </a>
+            </li>
+          {% endif %}
+          </ul>
+
+          <div class="card-body">
+            <div class="tab-content" id="profTabContent">
+              <div class="tab-pane fade" id="prof-watchlist" role="tabpanel" aria-labelledby="watchlist-profTab">
+              </div>
+              <div class="tab-pane fade" id="prof-chatters" role="tabpanel" aria-labelledby="chatters-profTab">
+
+              </div>
+              <div class="tab-pane fade" id="prof-followers" role="tabpanel" aria-labelledby="followers-profTab">
+              
+              </div>
+              <div class="tab-pane fade" id="prof-following" role="tabpanel" aria-labelledby="following-profTab">
+              
+              </div>
+              <div class="tab-pane fade" id="prof-likes" role="tabpanel" aria-labelledby="likes-profTab">
+              likes
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-1"></div>
+    </div>
+
+  </div>
+
+{% endblock %} 

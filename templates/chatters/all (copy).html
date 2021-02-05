@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+                                    <!-- CARD -->
+        <aside class="col-sm-12 col-md-4 col-lg-3 px-0">
+          <div class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs flex-column flex-sm-row card-header-tabs justify-content-evenly" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a href="#watchlist" class="nav-link nav-font px-1" id="watchlist-tab"  data-bs-toggle="tab"  role="tab" aria-controls="watchlist" aria-selected="false">Watchlist</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a href="#following" class="nav-link nav-font px-1" id="following-tab"  data-bs-toggle="tab"  role="tab" aria-controls="following" aria-selected="false">Following</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a href="#likes" class="nav-link nav-font px-1" id="likes-tab"  data-bs-toggle="tab" role="tab" aria-controls="likes" aria-selected="false">Likes</a>
+                </li>
+              </ul>
+              <div class="card-body">
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+
+                  </div>
+                  <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+                    following
+                  </div>
+                  <div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+                    likes
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+                                    <!-- Chatters -->
+        <div class="col-sm-12 col-md-8 col-lg-9">
+          <ul class="list-group" id="messages">
+            {% for chatter in chatters %}
+              <li class="list-group-item my-2">
+                <a href="/chatters/{{ chatter.id  }}" class="message-link"/>
+                <a href="/users/{{ chatter.user.id }}">
+                  <img src="{{ chatter.user.image_url }}" alt="" class="timeline-image">
+                </a>
+                {% if g.user.id != chatter.user_id %}
+                  {% if g.user.is_following(chatter.user_id) %}
+                    <form action="/stop-following/{{chatter.user_id}}" method="post">
+                      <button class="btn btn-danger btn-sm" type="submit">Unfollow</button>
+                    </form>
+                  {% else %}
+                    <form action="/follow/{{chatter.user_id}}" method="post">
+                      <button class="btn btn-primary btn-sm" type="submit">Follow</button>
+                    </form>
+                  {% endif %}
+                {% endif %}
+                <div class="message-area">
+                  <a href="/users/{{ chatter.user.id }}">@{{ chatter.user.username }}</a>
+                  <span class="text-muted">{{ chatter.timestamp.strftime('%d %B %Y') }}</span>
+                  <p>{{ chatter.body }}</p>
+                </div>
+                {% if chatter.user_id != g.user.id %}
+                  {% if chatter.id in liked_chatters_list %}
+                    <div id="messages-form">
+                      <form method="POST" action="/likes/{{ chatter.id }}/delete" id="messages-form">
+                        <button class="btn btn-link">
+                          <i class="fas fa-thumbs-up"></i> 
+                        </button>
+                      </form>
+                      <form action="/chatters/{{ chatter.id }}" id="messages-form">
+                        <button class="btn btn-link">
+                          <i class="far fa-comment-alt"></i>
+                        </button>
+                      </form>
+                    </div>
+                  {% else %}
+                    <div id="messages-form" class="row m-1">
+                      
+                        <form method="POST"  class="d-inline-flex col" action="/likes/{{ chatter.id }}/add">
+                          <button class="btn btn-link">
+                            <i class="far fa-thumbs-up "></i>
+                          </button>
+                        </form>
+                        <form method="GET" class="d-inline-flex col" action="/chatters/{{ chatter.id }}">
+                          <button class="btn btn-link pl-0 mr-1">
+                            <i class="far fa-comment-alt">{{ chatter.comments|length}}</i>
+                          </button>
+                        </form>
+
+                    </div>    
+                  {% endif %}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+    </div>
+  </div>
+{% endblock %}

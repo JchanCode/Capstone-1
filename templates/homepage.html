@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- HOMEPAGE.HTML -->
+<div class="container">
+  <div class="row">
+<!-- CARD -->
+    <aside class="col-sm-12 col-md-4 col-lg-3 px-0">
+      <div class="card text-center">
+        <div class="card-header">
+
+          <ul class="nav nav-tabs flex-column flex-sm-row card-header-tabs justify-content-evenly" id="myTab" role="tablist">
+
+            <li class="nav-item" role="presentation">
+              <a href="#watchlist" class="nav-link nav-font px-1" id="watchlist-tab"  data-bs-toggle="tab"  role="tab" aria-controls="watchlist" aria-selected="false">Watchlist</a>
+            </li>
+
+            <li class="nav-item" role="presentation">
+              <a href="#following" class="nav-link nav-font px-1" id="following-tab"  data-bs-toggle="tab"  role="tab" aria-controls="following" aria-selected="false">Following</a>
+            </li>
+
+            
+            <li class="nav-item" role="presentation">
+              <a href="#likes" class="nav-link nav-font px-1" id="likes-tab"  data-bs-toggle="tab" role="tab" aria-controls="likes" aria-selected="false">Liked</a>
+            </li>
+
+
+          </ul>
+          
+          <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade" id="watchlist" role="tabpanel" aria-labelledby="watchlist-tab">
+
+              </div>
+              <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+                following
+              </div>
+              <div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+                likes
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+<!-- News Area -->
+    <div class="col-sm-12 col-md-8 col-lg-9" id="news-container">
+      {% for new in news%}
+        <div class="container mt-3 mb-3">
+          <div class="row d-flex justify-content-center">
+              <div class="col news-shadow">
+                  <div class="d-flex flex-row"></div>
+                  <div class="row news-card pt-2 pr-3 pb-3">
+                        <div class="col pb-3 ">
+                          <div class="news-feed-text">
+                              <h5>{{new["headline"]}}</h5>
+                              <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+                                  <div class="d-flex flex-column">
+                                      <h6 class="username"><a href="{{new['url']}}">{{new["source"]}}</a></h6><span class="date">{{do_format(new["datetime"])}}</span>
+                                  </div>
+                                  <!-- <i class="fa fa-share share"></i> -->
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-3">
+                          <div class="feed-image"><img class="news-feed-image rounded img-fluid img-responsive" src="{{new['image']}}">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="pagination-wrapper">
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

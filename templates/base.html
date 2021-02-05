@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capstone</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/bootstrap"></script>
+    <link rel="stylesheet" href="/static/stylesheets/style.css">
+    <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+  <div class="container">
+    <nav class="navbar navbar-expand">
+<!-- Navbar Logo -->
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">
+          <span><i class="fas fa-map-signs"></i> TradingPost</span>
+        </a>
+        <ul class="nav navbar-nav">
+<!-- Navbar Search -->
+          <li>
+            <form action="/search">
+              <input name="search" id="search" type="text" class="form-control" placeholder="Search">
+              <button class="btn btn-default">
+                <span class="fa-fa-search"></span>
+              </button>
+            </form>
+          </li>
+<!-- IFSWITCH for loggedin user / not loggedin user -->
+          {% if not g.user %}
+<!-- Modal signup -->
+          <li><a href="#" data-toggle="modal" data-target="#modalSignup">Sign Up</a></li>
+          <div id="modalSignup" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Sign Up</h4>
+                </div>
+                <div class="modal-body">
+                  <form method="POST" action="/signup">
+                    {{ signup_form.hidden_tag() }}
+
+                    {% for field in signup_form if field.widget.input_type != "hidden" %}
+                      {% for error in field.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                      {% endfor %}
+                      {{ field(placeholder=field.label.text, class="form-control") }}
+                    {% endfor %}
+
+                    <button class="btn btn-success">Sign up</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+<!-- Modal login -->
+          <li><a href="#" data-toggle="modal" data-target="#modalLogin">Log In</a></li>
+          <div id="modalLogin" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Log In</h4>
+                </div>
+                <div class="modal-body">
+                  <form action="/login" method="POST">
+                    {{ login_form.hidden_tag() }}
+
+                    {% for field in login_form if field.widget.input_type != "hidden"%}
+                      {% for error in field.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                      {% endfor %}
+                      {{ field(placeholder=field.label.text, class="form-control" )}}
+                    {% endfor %}
+
+                    <button class="btn btn-success">Log In</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <li>
+            <a href="/chatters">Chatters</a>
+          </li>
+          <li>
+            <a href="/users/{{g.user.id}}">
+              <img src="{{g.user.image_url}}" alt="{{g.user.username}}">
+            </a>
+          </li>
+<!-- Modal Post -->
+          <li><a href="#" data-toggle="modal" data-target="#modalPost">Post</a></li>
+          <div id="modalPost" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Post</h4>
+                </div>
+                <div class="modal-body">
+                  <form action="/chatters/add" method="POST">
+                    {{ post_form.hidden_tag() }}
+
+                    {% for field in post_form if field.widget.input_type != "hidden" %}
+                      {% for error in field.errors %}
+                        <span class="text-danger">{{ error }}</span>
+                      {% endfor %}
+                      {{ field(placeholder=field.label.text, class="form-control") }}
+                    {% endfor %}
+
+                    <button class="btn btn-success">Post</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <li><a href="/logout">Log out</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+<!-- Flash Msg -->
+  <div class="container">
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+
+  {% block content %}
+  {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/app.js"></script>
+</body>
+</html>

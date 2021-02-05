@@ -1,0 +1,150 @@
+Welcome to Alpha Vantage! Here is your API key: XPLA60QNNEUV9EQ1. Please record this API key at a safe place for future data access.
+
+
+
+
+
+
+FinnHub
+c03or7f48v6sogn2ue9g
+
+
+
+
+
+
+News API
+Your API key is: 276d4e6ed1b94a92bc992bdc6665a72f
+
+
+
+
+
+User
+-
+id int pk
+username string
+password string
+image_url string
+bio string
+location string
+followers
+following
+
+Follows
+-
+user_being_followed_id Fk >- User.id
+user_following_id Fk >- User.id
+
+Portfolio
+-
+id int pk
+name string
+body string
+user_id int FK >- User.id
+
+Port_stock
+-
+portfolio_id int FK >- Portfolio.id
+stock_id int FK >- Stock.id
+
+Stock
+-
+id int pk
+symbol string
+description string
+
+Port_comm
+-
+portfolio_id int FK >- Portfolio.id
+comment_id int FK >- Comment.id
+
+
+Comment
+-
+id int PK
+body string
+timestamp string
+user_id int Fk >- User.id
+
+Vote
+-
+id int Pk
+user_id ink Fk >- User.id
+portfolio_id int Fk >- Portfolio.id
+
+Message
+-
+id int Pk
+body string
+timestamp string
+user_id int Fk >- User.id
+
+Like
+-
+id int Pk
+user_id int Fk >- User.id
+message_id int Fk >- Message.id
+
+
+
+====================================================
+
+User
+-
+id int pk
+username string
+password string
+image_url string
+bio string
+location string
+followers
+following
+
+Follows
+-
+user_being_followed_id Fk >- User.id
+user_following_id Fk >- User.id
+
+Post
+-
+id int pk
+user_id int Fk >- User.id
+created_at string
+title string
+body string
+media_link string
+
+
+Stock
+-
+id int pk
+symbol string
+description string
+
+Like
+-
+id int pk
+user_id int Fk >- User.id
+post_id int Fk >- Post.id
+
+
+Comment
+-
+id int PK
+body string
+timestamp string
+user_id int Fk >- User.id
+post_id int Fk >- Post.id
+
+
+Watchlist
+-
+id int Pk
+user_id int Fk >- User.id
+stock_id int Fk >- Stock.id
+
+Like_WL
+-
+user_id int Fk >- User.id
+watchlist_id int Fk >- Watchlist.id 
