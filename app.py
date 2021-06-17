@@ -10,6 +10,7 @@ from datetime import date, timedelta, datetime
 import time
 from forms import RegisterUserForm, LoginForm, PostForm, CommentForm
 from models import db, connect_db, Follows, Likes, User, Chatter, Comment, Stock, Watchlist
+import os
 
 CURR_USER_KEY = "curr_user"
 
@@ -23,7 +24,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///capstone1"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
-app.config["SECRET_KEY"] = 'abc123'
+app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'abc123') 
 toolbar = DebugToolbarExtension(app)
 
 finnhub_client = finnhub.Client(api_key="c03or7f48v6sogn2ue9g") 
