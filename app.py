@@ -32,8 +32,8 @@ finnhub_client = finnhub.Client(api_key="c03or7f48v6sogn2ue9g")
 connect_db(app)
 
 
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 ###############################################################################
 #
