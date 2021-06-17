@@ -23,7 +23,7 @@ You will also need to setup a Postgres Database for the app.
 
 1. Clone the repo.
     ```sh
-    https://github.com/erikamanning/capstone1.git
+    https://github.com/JchanCode/Capstone-1
     ```
 
 2. Create a virtual environment in the project directory.
